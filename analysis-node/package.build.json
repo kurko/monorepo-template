@@ -1,0 +1,6 @@
+{
+  "license": "UNLICENSED",
+  "dependencies": {
+    "analysis": "file:../../analysis"
+  }
+}

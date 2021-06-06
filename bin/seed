@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+export INTRO="This script is intended for developing without Docker, useful when your computer isn't fast enough."
+
+printf "$INTRO\n"
+
+app/bin/rails db:seed

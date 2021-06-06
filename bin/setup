@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+
+export INTRO="This script is intended for developing without Docker, useful when your computer isn't fast enough.
+
+It installs the project and its dependencies, including downloading and compiling things.
+\n\n"
+printf "$INTRO"
+
+sleep 2
+
+if [ ! -d .git ]
+then
+  echo "Error: please run this bin from the repository root dir."
+  exit 1
+fi
+
+REPO_DIR=$(pwd)
+cd ../
+OUTSIDE_REPO_DIR=$(pwd)
+echo "$(pwd)"
+
+printf "\nSetting up: $REPO_DIR/analysis"
+cd $REPO_DIR/analysis
+yarn --silent
+yarn test
+
+printf "\nSetting up: $REPO_DIR/analysis-node"
+cd $REPO_DIR/analysis-node
+yarn --silent
+yarn test
+
+printf "\nSetting up: $REPO_DIR/app"
+cd $REPO_DIR/app
+bundle install --quiet
+yarn install
+bin/rails db:create db:migrate || (echo "Cannot migrate database" && exit 1)
+bin/rspec

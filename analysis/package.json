@@ -1,0 +1,30 @@
+{
+  "license": "UNLICENSED",
+  "version": "0.0.1",
+  "main": "build/index",
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.0.26",
+    "@types/node-fetch": "^2.5.8",
+    "@typescript-eslint/eslint-plugin": "^3.7.0",
+    "@typescript-eslint/parser": "^3.7.0",
+    "@vercel/ncc": "^0.27.0",
+    "eslint": "^7.5.0",
+    "eslint-plugin-jest": "^23.18.2",
+    "jest": "^26.1.0",
+    "node-fetch": "^2.6.1",
+    "source-map-support": "^0.5.19",
+    "ts-jest": "^26.5.0",
+    "typescript": "^4.1.3"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "dist": "npm run clean && tsc && ncc build build/index.js -o dist && echo \"Final file has: $(cat dist/index.js | wc -l | xargs) LoC\"",
+    "clean": "rm -fr build/*",
+    "lint": "eslint *.ts",
+    "test": "node --harmony node_modules/.bin/jest"
+  },
+  "dependencies": {
+    "date-fns": "^2.17.0"
+  }
+}

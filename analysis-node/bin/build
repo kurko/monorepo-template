@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+rm -rf build/*
+npm run clean
+echo "> tsc"
+yarn tsc
+echo "> cp package.build.json build/package.json"
+cp package.build.json build/package.json
+cd build
+printf "Pulling analysis/ build into analysis-node/ via yarn.\n"
+echo "> yarn install --production"
+yarn install --production
+cd ../

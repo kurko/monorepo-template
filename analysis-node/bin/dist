@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+printf "[Step 1/2] Building into build/\n"
+bin/build
+
+printf "\n[Step 2/2] Generating dist/index.js\n"
+yarn ncc build build/index.js -o dist
+echo "Final file has: $(cat dist/index.js | wc -l | xargs) LoC"

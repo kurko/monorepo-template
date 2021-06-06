@@ -1,0 +1,80 @@
+version: '2.2'
+networks:
+  network1:
+    driver: bridge
+    name: sharedservices
+
+volumes:
+  bundle_cache:
+  web_node_modules:
+  analysis_node_modules:
+  analysis_node_node_modules:
+  postgres:
+  redis:
+
+services:
+  web:
+    extends:
+      file: docker-compose.app.yml
+      service: app
+    environment:
+      WEBPACKER_DEV_SERVER_HOST: webpacker
+      PGAPPNAME: "app-web"
+      SOME_BIN: /container_name/src/program_bin
+    env_file:
+      - app/.env.development-docker
+    depends_on:
+      - postgres
+      - redis
+      - webpacker
+
+  webpacker:
+    extends:
+      file: docker-compose.app.yml
+      service: app
+    environment:
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+    env_file:
+      - app/.env.development-docker
+    command: ./bin/webpack-dev-server
+    ports:
+      - 3035:3035
+
+  # This is a generic codebase that can be embedded in mobile devices or run
+  # from within the same server as the app.
+  analysis:
+    build:
+      context: .
+      dockerfile: analysis/Dockerfile
+    command: bash
+    networks:
+      - network1
+    volumes:
+      - ./analysis/:/analysis
+      - analysis_node_modules:/analysis/node_modules
+
+  analysis-node:
+    build:
+      context: .
+      dockerfile: analysis-node/Dockerfile
+    networks:
+      - network1
+    volumes:
+      - ./analysis-node/:/analysis-node
+      - analysis_node_node_modules:/analysis-node/node_modules
+
+  postgres:
+    image: postgres:9.6.8-alpine
+    ports:
+      - 6432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:4.0.2-alpine
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+    volumes:
+      - redis:/data

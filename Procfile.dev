@@ -1,0 +1,3 @@
+app: app/bin/rails server -p 3000
+webpacker: app/bin/webpack-dev-server
+sidekiq: app/bin/sidekiq

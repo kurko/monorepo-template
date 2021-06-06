@@ -1,0 +1,59 @@
+version: '2.2'
+networks:
+  network1:
+    driver: bridge
+    name: sharedservices
+
+volumes:
+  bundle_cache:
+  web_node_modules:
+  analysis_node_modules:
+  analysis_node_node_modules:
+  postgres:
+  redis:
+
+services:
+  analysis:
+    extends:
+      file: docker-compose.yml
+      service: analysis
+    command: bash
+    networks:
+      - network1
+
+  analysis-node:
+    extends:
+      file: docker-compose.yml
+      service: analysis-node
+    networks:
+      - network1
+
+  web:
+    extends:
+      file: docker-compose.app.yml
+      service: app
+    env_file:
+      - ./app/.env.test-docker
+    environment:
+      PGAPPNAME: "app-web"
+      SOME_BIN: /container_name/src/program_bin
+      DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: "true"
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:9.6.8-alpine
+    #ports:
+    #  - 6432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:4.0.2-alpine
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+    volumes:
+      - redis:/data

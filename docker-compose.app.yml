@@ -1,0 +1,14 @@
+version: '2.2'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    environment:
+      SOME_BIN: /container_name/src/program_bin
+    ports:
+      - 3000:3000
+    volumes:
+      - ./app/:/app
+      - web_node_modules:/app/node_modules

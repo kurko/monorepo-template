@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+APP_ROOT = File.expand_path('..', __dir__)
+Dir.chdir(APP_ROOT) do
+  begin
+    exec "bundle exec sidekiq", *ARGV
+  rescue Errno::ENOENT
+    $stderr.puts "Could not start Sidekiq"
+    exit 1
+  end
+end

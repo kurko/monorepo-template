@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+export INTRO="This script is intended for developing without Docker, useful when your computer isn't fast enough."
+
+printf "$INTRO\n"
+
+# Checking whether foreman is installed.
+gem list | grep foreman > /dev/null 2>&1 || gem install foreman
+
+foreman start -f Procfile.dev "$@"
